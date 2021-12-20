@@ -43,7 +43,7 @@ proxyPageResult.getData().forEach(System.out::println);
 // Get up to 100 of your prime accounts on eternal farm.
 PageResult<EFPrime> primePageResult = efClient.getPrimePage(1, 100);
 
-// Print out all of your retrieved proxies.
+// Print out all of your retrieved primes.
 primePageResult.getData().forEach(System.out::println);
 ```
 
