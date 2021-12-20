@@ -50,7 +50,7 @@ primePageResult.getData().forEach(System.out::println);
 Library also able to create new accounts and update existing ones.
 
 #### Maven
-To use maven add these dependencies to your pom.xml:
+To use EFClient you need these dependencies:
 ```xml
 <dependencies>
     <dependency>
