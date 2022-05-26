@@ -11,7 +11,7 @@ import java.util.Date;
  * @project EFClient
  */
 @Data
-public class EFProxy
+public class EFPrimeLinkRequest
 {
 	private int id;
 	@SerializedName(value = "user_id")
@@ -20,27 +20,26 @@ public class EFProxy
 	private Date createdAt;
 	@SerializedName(value = "updated_at")
 	private Date updatedAt;
+	@SerializedName(value = "account_id")
+	private int accountId;
 	@SerializedName(value = "proxy_category_id")
 	private int proxyCategoryId;
-	@SerializedName(value = "country_code")
-	private String countryCode;
-	private String type;
-	private String name;
-	@SerializedName(value = "ip_address")
-	private String ipAddress;
-	private int port;
-	private String username;
-	private String password;
-	@SerializedName(value = "forwarder_port")
-	private int forwarderPort;
-	@SerializedName(value = "assignment_uses")
-	private int assignmentUses;
+	@SerializedName(value = "proxy_id")
+	private int proxyId;
+	@SerializedName(value = "prime_email")
+	private String primeEmail;
+	@SerializedName(value = "prime_password")
+	private String primePassword;
+	@SerializedName(value = "mail_password")
+	private String mailPassword;
+	private String status;
+	@SerializedName(value = "failed_reason")
+	private String failedReason;
 
 	@Override
 	public boolean equals(Object o)
 	{
-		if (!(o instanceof EFProxy other)) return false;
+		if (!(o instanceof EFPrimeLinkRequest other)) return false;
 		return id == other.id;
 	}
 }
-
