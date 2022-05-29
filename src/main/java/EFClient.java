@@ -338,7 +338,7 @@ public class EFClient
 				throw new IOException("Data was not found.");
 			}
 
-			Type type = TypeToken.getParameterized(CreateResult.class, cls).getType();
+			Type type = TypeToken.getParameterized(GetResult.class, cls).getType();
 			return new Gson().fromJson(element, type);
 		}
 	}
