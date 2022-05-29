@@ -32,6 +32,11 @@ public class EFClient
 		return getPageResult(EFAccount.class, buildFetchRequest("accounts", page, perPage));
 	}
 
+	public GetResult<EFAccount> getAccount(int id) throws IOException
+	{
+		return getGetResult(EFAccount.class, buildGetRequest("accounts", id));
+	}
+
 	public CreateResult<EFAccount> createAccount(EFAccount account) throws IOException
 	{
 		return getCreateResult(EFAccount.class, buildCreateRequest("accounts", new Gson().toJson(account)));
@@ -50,6 +55,11 @@ public class EFClient
 	public PageResult<EFAccountCategory> getAccountCategoryPage(int page, int perPage) throws IOException
 	{
 		return getPageResult(EFAccountCategory.class, buildFetchRequest("account-categories", page, perPage));
+	}
+
+	public GetResult<EFAccountCategory> getAccountCategory(int id) throws IOException
+	{
+		return getGetResult(EFAccountCategory.class, buildGetRequest("account-categories", id));
 	}
 
 	public CreateResult<EFAccountCategory> createAccountCategory(EFAccountCategory accountCategory) throws IOException
@@ -72,6 +82,11 @@ public class EFClient
 		return getPageResult(EFBot.class, buildFetchRequest("bots", page, perPage));
 	}
 
+	public GetResult<EFBot> getBot(int id) throws IOException
+	{
+		return getGetResult(EFBot.class, buildGetRequest("bots", id));
+	}
+
 	public CreateResult<EFBot> createBot(EFBot bot) throws IOException
 	{
 		return getCreateResult(EFBot.class, buildCreateRequest("bots", new Gson().toJson(bot)));
@@ -90,6 +105,11 @@ public class EFClient
 	public PageResult<EFAgent> getAgentPage(int page, int perPage) throws IOException
 	{
 		return getPageResult(EFAgent.class, buildFetchRequest("agents", page, perPage));
+	}
+
+	public GetResult<EFAgent> getAgent(int id) throws IOException
+	{
+		return getGetResult(EFAgent.class, buildGetRequest("agents", id));
 	}
 
 	public CreateResult<EFAgent> createAgent(EFAgent agent) throws IOException
@@ -112,6 +132,11 @@ public class EFClient
 		return getPageResult(EFProxy.class,buildFetchRequest("proxies", page, perPage));
 	}
 
+	public GetResult<EFProxy> getProxy(int id) throws IOException
+	{
+		return getGetResult(EFProxy.class, buildGetRequest("proxies", id));
+	}
+
 	public CreateResult<EFProxy> createProxy(EFProxy proxy) throws IOException
 	{
 		return getCreateResult(EFProxy.class, buildCreateRequest("proxies", new Gson().toJson(proxy)));
@@ -132,6 +157,11 @@ public class EFClient
 		return getPageResult(EFProxyCategory.class, buildFetchRequest("proxy-categories", page, perPage));
 	}
 
+	public GetResult<EFProxyCategory> getProxyCategory(int id) throws IOException
+	{
+		return getGetResult(EFProxyCategory.class, buildGetRequest("proxy-categories", id));
+	}
+
 	public CreateResult<EFProxyCategory> createProxyCategory(EFProxyCategory proxyCategory) throws IOException
 	{
 		return getCreateResult(EFProxyCategory.class, buildCreateRequest("proxy-categories", new Gson().toJson(proxyCategory)));
@@ -150,6 +180,11 @@ public class EFClient
 	public PageResult<EFTask> getTaskPage(int page, int perPage) throws IOException
 	{
 		return getPageResult(EFTask.class, buildFetchRequest("tasks", page, perPage));
+	}
+
+	public GetResult<EFTask> getTask(int id) throws IOException
+	{
+		return getGetResult(EFTask.class, buildGetRequest("tasks", id));
 	}
 
 	public CreateResult<EFTask> createTask(EFTask task) throws IOException
@@ -224,6 +259,11 @@ public class EFClient
 		return getPageResult(EFPrimeLinkRequest.class, buildFetchRequest("prime-link-requests", page, perPage));
 	}
 
+	public GetResult<EFPrimeLinkRequest> getPrimeLinkRequest(int id) throws IOException
+	{
+		return getGetResult(EFPrimeLinkRequest.class, buildGetRequest("prime-link-requests", id));
+	}
+
 	public CreateResult<EFPrimeLinkRequest> createPrimeLinkRequest(EFPrimeLinkRequest primeLinkRequest) throws IOException
 	{
 		return getCreateResult(EFPrimeLinkRequest.class, buildCreateRequest("prime-link-requests", new Gson().toJson(primeLinkRequest)));
@@ -267,6 +307,38 @@ public class EFClient
 			}
 
 			Type type = TypeToken.getParameterized(PageResult.class, cls).getType();
+			return new Gson().fromJson(element, type);
+		}
+	}
+
+	private <T> GetResult<T> getGetResult(Class<T> cls, Request request) throws IOException
+	{
+		try (Response response = client.newCall(request).execute())
+		{
+			String responseBody = response.body() != null ? Objects.requireNonNull(response.body()).string() : "";
+
+			if (!response.isSuccessful())
+			{
+				if (response.code() == 401)
+				{
+					throw new IOException("Unauthorized request, API key is either undefined or invalid.");
+				}
+
+				throw new IOException("Error getting data from Eternal Farm: " + response + " - " + responseBody);
+			}
+
+			JsonObject element = JsonParser.parseString(responseBody).getAsJsonObject();
+			if (element.has("success") && !element.get("success").getAsBoolean())
+			{
+				throw new IOException("Data get was not successful.");
+			}
+
+			if (!element.has("data"))
+			{
+				throw new IOException("Data was not found.");
+			}
+
+			Type type = TypeToken.getParameterized(CreateResult.class, cls).getType();
 			return new Gson().fromJson(element, type);
 		}
 	}
@@ -371,6 +443,18 @@ public class EFClient
 						.addQueryParameter("page", String.valueOf(Math.max(page, 1)))
 						.addQueryParameter("per_page", String.valueOf(Math.max(perPage, 1)))
 						.build())
+				.build();
+	}
+
+	private Request buildGetRequest(String type, int id)
+	{
+		return new Request.Builder()
+				.url(getBaseUrl().newBuilder()
+						.addPathSegment(type)
+						.addPathSegment(String.valueOf(id))
+						.addQueryParameter("key", apiKey)
+						.build())
+				.get()
 				.build();
 	}
 
