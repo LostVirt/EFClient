@@ -1,4 +1,5 @@
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -21,6 +22,7 @@ public class EFClient
 {
 	private final OkHttpClient client;
 	private final String apiKey;
+	private final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").create();
 
 	private HttpUrl getBaseUrl()
 	{
@@ -39,12 +41,12 @@ public class EFClient
 
 	public CreateResult<EFAccount> createAccount(EFAccount account) throws IOException
 	{
-		return getCreateResult(EFAccount.class, buildCreateRequest("accounts", new Gson().toJson(account)));
+		return getCreateResult(EFAccount.class, buildCreateRequest("accounts", gson.toJson(account)));
 	}
 
 	public UpdateResult<EFAccount> updateAccount(EFAccount account) throws IOException
 	{
-		return getUpdateResult(EFAccount.class, buildUpdateRequest("accounts", account.getId(), new Gson().toJson(account)));
+		return getUpdateResult(EFAccount.class, buildUpdateRequest("accounts", account.getId(), gson.toJson(account)));
 	}
 
 	public DeleteResult<EFAccount> deleteAccount(EFAccount account) throws IOException
@@ -64,12 +66,12 @@ public class EFClient
 
 	public CreateResult<EFAccountCategory> createAccountCategory(EFAccountCategory accountCategory) throws IOException
 	{
-		return getCreateResult(EFAccountCategory.class, buildCreateRequest("account-categories", new Gson().toJson(accountCategory)));
+		return getCreateResult(EFAccountCategory.class, buildCreateRequest("account-categories", gson.toJson(accountCategory)));
 	}
 
 	public UpdateResult<EFAccountCategory> updateAccountCategory(EFAccountCategory accountCategory) throws IOException
 	{
-		return getUpdateResult(EFAccountCategory.class, buildUpdateRequest("account-categories", accountCategory.getId(), new Gson().toJson(accountCategory)));
+		return getUpdateResult(EFAccountCategory.class, buildUpdateRequest("account-categories", accountCategory.getId(), gson.toJson(accountCategory)));
 	}
 
 	public DeleteResult<EFAccountCategory> deleteAccountCategory(EFAccountCategory accountCategory) throws IOException
@@ -89,12 +91,12 @@ public class EFClient
 
 	public CreateResult<EFBot> createBot(EFBot bot) throws IOException
 	{
-		return getCreateResult(EFBot.class, buildCreateRequest("bots", new Gson().toJson(bot)));
+		return getCreateResult(EFBot.class, buildCreateRequest("bots", gson.toJson(bot)));
 	}
 
 	public UpdateResult<EFBot> updateBot(EFBot bot) throws IOException
 	{
-		return getUpdateResult(EFBot.class, buildUpdateRequest("bots", bot.getId(), new Gson().toJson(bot)));
+		return getUpdateResult(EFBot.class, buildUpdateRequest("bots", bot.getId(), gson.toJson(bot)));
 	}
 
 	public DeleteResult<EFBot> deleteBot(EFBot bot) throws IOException
@@ -114,12 +116,12 @@ public class EFClient
 
 	public CreateResult<EFAgent> createAgent(EFAgent agent) throws IOException
 	{
-		return getCreateResult(EFAgent.class, buildCreateRequest("agents", new Gson().toJson(agent)));
+		return getCreateResult(EFAgent.class, buildCreateRequest("agents", gson.toJson(agent)));
 	}
 
 	public UpdateResult<EFAgent> updateAgent(EFAgent agent) throws IOException
 	{
-		return getUpdateResult(EFAgent.class, buildUpdateRequest("agents", agent.getId(), new Gson().toJson(agent)));
+		return getUpdateResult(EFAgent.class, buildUpdateRequest("agents", agent.getId(), gson.toJson(agent)));
 	}
 
 	public DeleteResult<EFAgent> deleteAgent(EFAgent agent) throws IOException
@@ -139,12 +141,12 @@ public class EFClient
 
 	public CreateResult<EFProxy> createProxy(EFProxy proxy) throws IOException
 	{
-		return getCreateResult(EFProxy.class, buildCreateRequest("proxies", new Gson().toJson(proxy)));
+		return getCreateResult(EFProxy.class, buildCreateRequest("proxies", gson.toJson(proxy)));
 	}
 
 	public UpdateResult<EFProxy> updateProxy(EFProxy proxy) throws IOException
 	{
-		return getUpdateResult(EFProxy.class, buildUpdateRequest("proxies", proxy.getId(), new Gson().toJson(proxy)));
+		return getUpdateResult(EFProxy.class, buildUpdateRequest("proxies", proxy.getId(), gson.toJson(proxy)));
 	}
 
 	public DeleteResult<EFProxy> deleteProxy(EFProxy proxy) throws IOException
@@ -164,12 +166,12 @@ public class EFClient
 
 	public CreateResult<EFProxyCategory> createProxyCategory(EFProxyCategory proxyCategory) throws IOException
 	{
-		return getCreateResult(EFProxyCategory.class, buildCreateRequest("proxy-categories", new Gson().toJson(proxyCategory)));
+		return getCreateResult(EFProxyCategory.class, buildCreateRequest("proxy-categories", gson.toJson(proxyCategory)));
 	}
 
 	public UpdateResult<EFProxyCategory> updateProxyCategory(EFProxyCategory proxyCategory) throws IOException
 	{
-		return getUpdateResult(EFProxyCategory.class, buildUpdateRequest("proxy-categories", proxyCategory.getId(), new Gson().toJson(proxyCategory)));
+		return getUpdateResult(EFProxyCategory.class, buildUpdateRequest("proxy-categories", proxyCategory.getId(), gson.toJson(proxyCategory)));
 	}
 
 	public DeleteResult<EFProxyCategory> deleteAccount(EFProxyCategory proxy) throws IOException
@@ -189,12 +191,12 @@ public class EFClient
 
 	public CreateResult<EFTask> createTask(EFTask task) throws IOException
 	{
-		return getCreateResult(EFTask.class, buildCreateRequest("tasks", new Gson().toJson(task)));
+		return getCreateResult(EFTask.class, buildCreateRequest("tasks", gson.toJson(task)));
 	}
 
 	public UpdateResult<EFTask> updateTask(EFTask task) throws IOException
 	{
-		return getUpdateResult(EFTask.class, buildUpdateRequest("tasks", task.getId(), new Gson().toJson(task)));
+		return getUpdateResult(EFTask.class, buildUpdateRequest("tasks", task.getId(), gson.toJson(task)));
 	}
 
 	public DeleteResult<EFTask> deleteTask(EFTask task) throws IOException
@@ -224,7 +226,7 @@ public class EFClient
 				throw new IOException("Start task request was not successful.");
 			}
 
-			return new Gson().fromJson(element, StartTaskResult.class);
+			return gson.fromJson(element, StartTaskResult.class);
 		}
 	}
 
@@ -250,7 +252,7 @@ public class EFClient
 				throw new IOException("Stop task request was not successful.");
 			}
 
-			return new Gson().fromJson(element, StopTaskResult.class);
+			return gson.fromJson(element, StopTaskResult.class);
 		}
 	}
 
@@ -266,12 +268,12 @@ public class EFClient
 
 	public CreateResult<EFPrimeLinkRequest> createPrimeLinkRequest(EFPrimeLinkRequest primeLinkRequest) throws IOException
 	{
-		return getCreateResult(EFPrimeLinkRequest.class, buildCreateRequest("prime-link-requests", new Gson().toJson(primeLinkRequest)));
+		return getCreateResult(EFPrimeLinkRequest.class, buildCreateRequest("prime-link-requests", gson.toJson(primeLinkRequest)));
 	}
 
 	public UpdateResult<EFPrimeLinkRequest> updatePrimeLinkRequest(EFPrimeLinkRequest primeLinkRequest) throws IOException
 	{
-		return getUpdateResult(EFPrimeLinkRequest.class, buildUpdateRequest("prime-link-requests", primeLinkRequest.getId(), new Gson().toJson(primeLinkRequest)));
+		return getUpdateResult(EFPrimeLinkRequest.class, buildUpdateRequest("prime-link-requests", primeLinkRequest.getId(), gson.toJson(primeLinkRequest)));
 	}
 
 	public DeleteResult<EFPrimeLinkRequest> deletePrimeLinkRequest(EFPrimeLinkRequest primeLinkRequest) throws IOException
@@ -307,7 +309,7 @@ public class EFClient
 			}
 
 			Type type = TypeToken.getParameterized(PageResult.class, cls).getType();
-			return new Gson().fromJson(element, type);
+			return gson.fromJson(element, type);
 		}
 	}
 
@@ -339,7 +341,7 @@ public class EFClient
 			}
 
 			Type type = TypeToken.getParameterized(GetResult.class, cls).getType();
-			return new Gson().fromJson(element, type);
+			return gson.fromJson(element, type);
 		}
 	}
 
@@ -371,7 +373,7 @@ public class EFClient
 			}
 
 			Type type = TypeToken.getParameterized(CreateResult.class, cls).getType();
-			return new Gson().fromJson(element, type);
+			return gson.fromJson(element, type);
 		}
 	}
 
@@ -403,7 +405,7 @@ public class EFClient
 			}
 
 			Type type = TypeToken.getParameterized(UpdateResult.class, cls).getType();
-			return new Gson().fromJson(element, type);
+			return gson.fromJson(element, type);
 		}
 	}
 
@@ -430,7 +432,7 @@ public class EFClient
 			}
 
 			Type type = TypeToken.getParameterized(DeleteResult.class, cls).getType();
-			return new Gson().fromJson(element, type);
+			return gson.fromJson(element, type);
 		}
 	}
 
@@ -471,6 +473,7 @@ public class EFClient
 
 	private Request buildUpdateRequest(String type, int id, String data)
 	{
+		System.out.println(data);
 		return new Request.Builder()
 				.url(getBaseUrl().newBuilder()
 						.addPathSegment(type)
