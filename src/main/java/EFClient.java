@@ -10,6 +10,7 @@ import result.*;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -31,7 +32,12 @@ public class EFClient
 
 	public PageResult<EFAccount> getAccountPage(int page, int perPage) throws IOException
 	{
-		return getPageResult(EFAccount.class, buildFetchRequest("accounts", page, perPage));
+		return getAccountPage(page, perPage, null);
+	}
+
+	public PageResult<EFAccount> getAccountPage(int page, int perPage, Map<String, String> filters) throws IOException
+	{
+		return getPageResult(EFAccount.class, buildFetchRequest("accounts", page, perPage, filters));
 	}
 
 	public GetResult<EFAccount> getAccount(int id) throws IOException
@@ -54,9 +60,24 @@ public class EFClient
 		return getDeleteResult(EFAccount.class, buildDeleteRequest("accounts", account.getId()));
 	}
 
+	public GetResult<EFAccount> getNextTutorialAccount(Map<String, String> filters) throws IOException
+	{
+		return getGetResult(EFAccount.class, buildFetchRequest("accounts/next-tutorial", 0, 0, filters));
+	}
+
+	public PageResult<EFAccount> getNextCheckAccounts(int perPage, Map<String, String> filters) throws IOException
+	{
+		return getPageResult(EFAccount.class, buildFetchRequest("accounts/next-check", 0, perPage, filters));
+	}
+
 	public PageResult<EFAccountCategory> getAccountCategoryPage(int page, int perPage) throws IOException
 	{
-		return getPageResult(EFAccountCategory.class, buildFetchRequest("account-categories", page, perPage));
+		return getAccountCategoryPage(page, perPage, null);
+	}
+
+	public PageResult<EFAccountCategory> getAccountCategoryPage(int page, int perPage, Map<String, String> filters) throws IOException
+	{
+		return getPageResult(EFAccountCategory.class, buildFetchRequest("account-categories", page, perPage, filters));
 	}
 
 	public GetResult<EFAccountCategory> getAccountCategory(int id) throws IOException
@@ -81,7 +102,12 @@ public class EFClient
 
 	public PageResult<EFBot> getBotPage(int page, int perPage) throws IOException
 	{
-		return getPageResult(EFBot.class, buildFetchRequest("bots", page, perPage));
+		return getBotPage(page, perPage, null);
+	}
+
+	public PageResult<EFBot> getBotPage(int page, int perPage, Map<String, String> filters) throws IOException
+	{
+		return getPageResult(EFBot.class, buildFetchRequest("bots", page, perPage, filters));
 	}
 
 	public GetResult<EFBot> getBot(int id) throws IOException
@@ -106,7 +132,12 @@ public class EFClient
 
 	public PageResult<EFAgent> getAgentPage(int page, int perPage) throws IOException
 	{
-		return getPageResult(EFAgent.class, buildFetchRequest("agents", page, perPage));
+		return getAgentPage(page, perPage, null);
+	}
+
+	public PageResult<EFAgent> getAgentPage(int page, int perPage, Map<String, String> filters) throws IOException
+	{
+		return getPageResult(EFAgent.class, buildFetchRequest("agents", page, perPage, filters));
 	}
 
 	public GetResult<EFAgent> getAgent(int id) throws IOException
@@ -131,7 +162,12 @@ public class EFClient
 
 	public PageResult<EFProxy> getProxyPage(int page, int perPage) throws IOException
 	{
-		return getPageResult(EFProxy.class,buildFetchRequest("proxies", page, perPage));
+		return getProxyPage(page, perPage, null);
+	}
+
+	public PageResult<EFProxy> getProxyPage(int page, int perPage, Map<String, String> filters) throws IOException
+	{
+		return getPageResult(EFProxy.class,buildFetchRequest("proxies", page, perPage, filters));
 	}
 
 	public GetResult<EFProxy> getProxy(int id) throws IOException
@@ -156,7 +192,12 @@ public class EFClient
 
 	public PageResult<EFProxyCategory> getProxyCategoryPage(int page, int perPage) throws IOException
 	{
-		return getPageResult(EFProxyCategory.class, buildFetchRequest("proxy-categories", page, perPage));
+		return getProxyCategoryPage(page, perPage, null);
+	}
+
+	public PageResult<EFProxyCategory> getProxyCategoryPage(int page, int perPage, Map<String, String> filters) throws IOException
+	{
+		return getPageResult(EFProxyCategory.class, buildFetchRequest("proxy-categories", page, perPage, filters));
 	}
 
 	public GetResult<EFProxyCategory> getProxyCategory(int id) throws IOException
@@ -181,7 +222,12 @@ public class EFClient
 
 	public PageResult<EFTask> getTaskPage(int page, int perPage) throws IOException
 	{
-		return getPageResult(EFTask.class, buildFetchRequest("tasks", page, perPage));
+		return getTaskPage(page, perPage, null);
+	}
+
+	public PageResult<EFTask> getTaskPage(int page, int perPage, Map<String, String> filters) throws IOException
+	{
+		return getPageResult(EFTask.class, buildFetchRequest("tasks", page, perPage, filters));
 	}
 
 	public GetResult<EFTask> getTask(int id) throws IOException
@@ -258,7 +304,12 @@ public class EFClient
 
 	public PageResult<EFPrimeLinkRequest> getPrimeLinkRequestPage(int page, int perPage) throws IOException
 	{
-		return getPageResult(EFPrimeLinkRequest.class, buildFetchRequest("prime-link-requests", page, perPage));
+		return getPrimeLinkRequestPage(page, perPage, null);
+	}
+
+	public PageResult<EFPrimeLinkRequest> getPrimeLinkRequestPage(int page, int perPage, Map<String, String> filters) throws IOException
+	{
+		return getPageResult(EFPrimeLinkRequest.class, buildFetchRequest("prime-link-requests", page, perPage, filters));
 	}
 
 	public GetResult<EFPrimeLinkRequest> getPrimeLinkRequest(int id) throws IOException
@@ -436,15 +487,29 @@ public class EFClient
 		}
 	}
 
-	private Request buildFetchRequest(String type, int page, int perPage)
+	private Request buildFetchRequest(String type, int page, int perPage, Map<String, String> filters)
 	{
+		HttpUrl.Builder urlBuilder = getBaseUrl().newBuilder()
+				.addPathSegment(type)
+				.addQueryParameter("key", apiKey);
+
+		if (page > 0)
+		{
+			urlBuilder.addQueryParameter("page", String.valueOf(page));
+		}
+
+		if (perPage > 0)
+		{
+			urlBuilder.addQueryParameter("per_page", String.valueOf(perPage));
+		}
+
+		if (filters != null)
+		{
+			filters.forEach(urlBuilder::addQueryParameter);
+		}
+
 		return new Request.Builder()
-				.url(getBaseUrl().newBuilder()
-						.addPathSegment(type)
-						.addQueryParameter("key", apiKey)
-						.addQueryParameter("page", String.valueOf(Math.max(page, 1)))
-						.addQueryParameter("per_page", String.valueOf(Math.max(perPage, 1)))
-						.build())
+				.url(urlBuilder.build())
 				.build();
 	}
 

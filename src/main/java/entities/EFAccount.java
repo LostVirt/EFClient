@@ -43,6 +43,8 @@ public class EFAccount
 	private String type;
 	@SerializedName(value = "bank_pin")
 	private String bankPin;
+	@SerializedName(value = "otp_key")
+	private String otpKey;
 	@SerializedName(value = "tutorial_status")
 	private int tutorialStatus;
 	@SerializedName(value = "total_level")
